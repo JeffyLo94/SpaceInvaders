@@ -1,8 +1,9 @@
-# AlienInvasion
-AlienInvasion Assignment CPSC-386
+# SpaceInvaders
+SpaceInvaders Assignment CPSC-386
+Based on AlienInvasion 
 
 ## Run
-Run the AlienInvasion.py file
+Run the SpaceInvaders.py file
 
 
 ## Run Settings
