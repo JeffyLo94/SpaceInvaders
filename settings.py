@@ -1,12 +1,19 @@
 from os.path import abspath, dirname
-
+from pygame import *
+from text import Text
 
 class Settings:
 
 
     def __init__(self):
+        WHITE = (255, 255, 255)
+        GREEN = (78, 255, 87)
+        YELLOW = (241, 255, 0)
+        BLUE = (80, 255, 239)
+        PURPLE = (203, 0, 255)
+        RED = (237, 28, 36)
+
         self.BASE_PATH = abspath(dirname(__file__)) + '/assets'
-        self.FONT_PATH = self.BASE_PATH + '/fonts/'
         self.IMAGE_PATH = self.BASE_PATH + '/images/'
         self.SOUND_PATH = self.BASE_PATH + '/sounds/'
 
@@ -18,6 +25,17 @@ class Settings:
         # Text Settings
         self.text_color = (255, 255, 255)
         self.font_size = 48
+
+        self.titleText = Text(None, 50, 'Space Invaders', WHITE, 164, 155)
+        self.titleText2 = Text(None, 25, 'Press any key to continue', WHITE,
+                               201, 225)
+        self.gameOverText = Text(None, 50, 'Game Over', WHITE, 250, 270)
+        self.nextRoundText = Text(None, 50, 'Next Round', WHITE, 240, 270)
+        self.enemy1Text = Text(None, 25, '   =   10 pts', GREEN, 368, 270)
+        self.enemy2Text = Text(None, 25, '   =  20 pts', BLUE, 368, 320)
+        self.enemy3Text = Text(None, 25, '   =  30 pts', PURPLE, 368, 370)
+        self.enemy4Text = Text(None, 25, '   =  ?????', RED, 368, 420)
+
 
         # Button settings
         self.btn_color = (0, 255, 0)
@@ -36,14 +54,21 @@ class Settings:
 
         # Alien settings.
         self.ufo_image = self.IMAGE_PATH + 'UFO.png'
-        self.alien_classic1 = self.IMAGE_PATH + 'alien-classic-frame1.png'
-        self.alien_classic2 = self.IMAGE_PATH + 'alien-classic-frame2.png'
-        self.alien_creep1 = self.IMAGE_PATH + 'alien-creep-frame1.png'
-        self.alien_creep2 = self.IMAGE_PATH + 'alien-creep-frame2.png'
-        self.alien_ghost1 = self.IMAGE_PATH + 'alien-ghost-frame1.png'
-        self.alien_ghost2 = self.IMAGE_PATH + 'alien-ghost-frame2.png'
-        self.alien_squid1 = self.IMAGE_PATH + 'alien-squid-frame1.png'
-        self.alien_squid2 = self.IMAGE_PATH + 'alien-squid-frame2.png'
+        self.alien_image_names = ['alien-classic-frame1.png', 'alien-classic-frame2.png',
+                                  'alien-ghost-frame1.png', 'alien-ghost-frame2.png',
+                                  'alien-creep-frame1.png', 'alien-creep-frame2.png']
+        self.ALIEN_IMAGES = {name: image.load(IMAGE_PATH + '{}.png'.format(name)).convert_alpha()
+                  for name in IMG_NAMES}
+
+        self.alien_explosions = [ 'purple_explosion.png', 'blue_explosion.png', 'green_explosion.png']
+        # self.alien_classic1 = self.IMAGE_PATH + 'alien-classic-frame1.png'
+        # self.alien_classic2 = self.IMAGE_PATH + 'alien-classic-frame2.png'
+        # self.alien_creep1 = self.IMAGE_PATH + 'alien-creep-frame1.png'
+        # self.alien_creep2 = self.IMAGE_PATH + 'alien-creep-frame2.png'
+        # self.alien_ghost1 = self.IMAGE_PATH + 'alien-ghost-frame1.png'
+        # self.alien_ghost2 = self.IMAGE_PATH + 'alien-ghost-frame2.png'
+        # self.alien_squid1 = self.IMAGE_PATH + 'alien-squid-frame1.png'
+        # self.alien_squid2 = self.IMAGE_PATH + 'alien-squid-frame2.png'
 
         self.fleet_drop_speed = 10
         self.alien_points = 50
