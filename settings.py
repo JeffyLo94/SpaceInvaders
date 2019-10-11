@@ -1,6 +1,15 @@
+from os.path import abspath, dirname
+
+
 class Settings:
 
+
     def __init__(self):
+        self.BASE_PATH = abspath(dirname(__file__)) + '/assets'
+        self.FONT_PATH = self.BASE_PATH + '/fonts/'
+        self.IMAGE_PATH = self.BASE_PATH + '/images/'
+        self.SOUND_PATH = self.BASE_PATH + '/sounds/'
+
         # Screen settings.
         self.screen_width = 1200
         self.screen_height = 800
@@ -16,7 +25,7 @@ class Settings:
         self.btn_h = 50
 
         # Ship settings.
-        self.ship_image = 'assets/images/spaceship.png'
+        self.ship_image = self.IMAGE_PATH + 'spaceship.png'
         self.ship_limit = 3
 
         # Bullet settings.
@@ -26,7 +35,16 @@ class Settings:
         self.bullets_allowed = 3
 
         # Alien settings.
-        self.alien_image = 'assets/images/alien.png'
+        self.ufo_image = self.IMAGE_PATH + 'UFO.png'
+        self.alien_classic1 = self.IMAGE_PATH + 'alien-classic-frame1.png'
+        self.alien_classic2 = self.IMAGE_PATH + 'alien-classic-frame2.png'
+        self.alien_creep1 = self.IMAGE_PATH + 'alien-creep-frame1.png'
+        self.alien_creep2 = self.IMAGE_PATH + 'alien-creep-frame2.png'
+        self.alien_ghost1 = self.IMAGE_PATH + 'alien-ghost-frame1.png'
+        self.alien_ghost2 = self.IMAGE_PATH + 'alien-ghost-frame2.png'
+        self.alien_squid1 = self.IMAGE_PATH + 'alien-squid-frame1.png'
+        self.alien_squid2 = self.IMAGE_PATH + 'alien-squid-frame2.png'
+
         self.fleet_drop_speed = 10
         self.alien_points = 50
         # fleet_direction of 1 represents right, -1 represents left.
