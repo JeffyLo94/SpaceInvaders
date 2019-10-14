@@ -37,10 +37,10 @@ class EnemyDisplay:
         y_offset = self.y_start
         for a, es in zip(self.aliens, self.example_scores):
             a[1].centery = y_offset
-            a[1].centerx = (self.settings.screen_width // 2) - a[1].width
+            a[1].centerx = int(self.settings.screen_width / 2) - a[1].width
             es.prep_image()
             es.image_rect.centery = y_offset
-            es.image_rect.centerx = (self.settings.screen_width // 2) + a[1].width
+            es.image_rect.centerx = int(self.settings.screen_width / 2) + a[1].width
             y_offset += int(a[1].height * 1.5)
 
     def show_examples(self):

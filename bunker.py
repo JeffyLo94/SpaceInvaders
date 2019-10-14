@@ -9,6 +9,7 @@ class Bunker(sprite.Sprite):
         self.height = ai_settings.bunker_size_h
         self.width = ai_settings.bunker_size_w
         self.color = ai_settings.bunker_color
+        self.destroy_f = ai_settings.destruction_factor
         self.image = Surface((self.width, self.height))
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
@@ -18,18 +19,25 @@ class Bunker(sprite.Sprite):
 
     def damage(self, top):
         if not self.dmg:
-            px_arr = PixelArray(self.image)
-            if top:
-                for i in range(self.height * 3):
-                    px_arr[randrange(0, self.width - 1),
-                           randrange(0, self.height // 2)] = (0, 0, 0, 0)
-            else:
-                for i in range(self.height * 3):
-                    px_arr[randrange(0, self.width - 1),
-                           randrange(self.height // 2, self.height - 1)] = (0, 0, 0, 0)
+            arr = PixelArray(self.image)
+            self.set_damage(arr, top)
             self.dmg = True
         else:
             self.kill()
+
+    def set_damage(self, pixel_arr, top=False):
+        x_range_low = 0
+        x_range_high = self.width-1
+        if top:
+            y_range_low = 0
+            y_range_high = int(self.height/2)
+        else:
+            y_range_low = int(self.height / 2)
+            y_range_high = self.height - 1
+
+        for i in range(self.height * self.destroy_f):
+            pixel_arr[randrange(x_range_low, x_range_high),
+                   randrange(y_range_low, y_range_high)] = (0, 0, 0, 0)
 
     def update(self):
         self.screen.blit(self.image, self.rect)

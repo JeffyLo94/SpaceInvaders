@@ -6,6 +6,7 @@ import random
 from bullet import Bullet
 from laser import Laser
 from alien import Alien, Ufo
+from bunker import Bunker
 from start_screen import level_intro, Intro
 from button import Button
 from high_score_screen import HighScoreScreen
@@ -58,11 +59,14 @@ def start_new_game(ai_settings, screen, stats, sb,
     aliens.empty()
     bullets.empty()
     beams.empty()
+    # reset bunker
+
     # New fleet
     create_fleet(ai_settings, screen, ship, aliens)
     stats.next_speedup = len(aliens) - (len(aliens) // 5)
     stats.aliens_left = len(aliens)
     ship.center_ship()
+
 
 # def check_play_button(ai_settings, screen, stats, sb, play_button, ship,
 #                       aliens, bullets, mouse_x, mouse_y):
@@ -137,7 +141,8 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, lasers, bullets,
 
 
 def ufo_event_check(ai_settings, screen, ufos):
-    if ( (not ai_settings.last_ufo) or (abs(ai_settings.last_ufo - pygame.time.get_ticks()) > ai_settings.ufo_spawn_time) ) and not ufos:
+    if ((not ai_settings.last_ufo) or (
+            abs(ai_settings.last_ufo - pygame.time.get_ticks()) > ai_settings.ufo_spawn_time)) and not ufos:
         ai_settings.last_ufo, some_ufo = create_random_ufo(ai_settings, screen)
         if some_ufo:
             ufos.add(some_ufo)
@@ -165,7 +170,7 @@ def update_lasers_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets,
     check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship,
                                   aliens, lasers, bullets, ufo)
     check_laser_ship_collisions(ai_settings, screen, stats, sb, ship,
-                                  aliens, lasers, bullets, ufo)
+                                aliens, lasers, bullets, ufo)
 
 
 def check_high_score(stats, sb):
@@ -182,7 +187,7 @@ def alien_bullet_collision(bullet, alien):
 
 def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, lasers, bullets, ufo):
     # Remove any bullets and aliens that have collided.
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, False, collided= alien_bullet_collision)
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, False, collided=alien_bullet_collision)
 
     if collisions:
         for aliens in collisions.values():
@@ -219,27 +224,42 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
         stats.next_speedup = len(aliens) - (len(aliens) // 5)
     stats.aliens_left = len(aliens)
     if stats.aliens_left <= stats.next_speedup and ai_settings.alien_speed_factor < ai_settings.alien_speed_limit:
-        stats.next_speedup = stats.aliens_left - (stats.next_speedup//5)
+        stats.next_speedup = stats.aliens_left - (stats.next_speedup // 5)
 
 
 def check_bunker_collision(bullets, lasers, bunker):
-    # if lasers:
-    #     return
     laserCollide = pygame.sprite.groupcollide(lasers, bunker, True, False)
-    # laserCollide = pygame.sprite.spritecollide(lasers,bunker, True)
-    for l in laserCollide.values():
-        for blockpart in l:
-            blockpart.damage(top=True)
-    bulletCollide = pygame.sprite.groupcollide(bullets, bunker, True, False )
-    for l in bulletCollide.values():
-        for blockpart in l:
-            blockpart.damage(top=False)
-
+    if not len(laserCollide) == 0:
+        for l in laserCollide.values():
+            # correcting collision detection bug
+            l.sort(key=lambda b: b.row, reverse=False)
+            destructRow = l[0].row
+            dList = []
+            for b in l:
+                if b.row <= destructRow:
+                    destructRow = b.row
+                    dList.append(b)
+            for bPart in dList:
+                bPart.damage(top=True)
+    bulletCollide = pygame.sprite.groupcollide(bullets, bunker, True, False)
+    if not len(bulletCollide) == 0:
+        print(bulletCollide.values())
+        for l in bulletCollide.values():
+            # correcting collision detection bug
+            l.sort(key=lambda b: b.row, reverse=True)
+            destructRow = 0
+            dList = []
+            for b in l:
+                if b.row >= destructRow:
+                    destructRow = b.row
+                    dList.append(b)
+            for bPart in dList:
+                bPart.damage(top=False)
 
 
 def check_laser_ship_collisions(ai_settings, screen, stats, sb, ship, aliens, lasers, bullets, ufo):
     if pygame.sprite.spritecollideany(ship, lasers):
-        ship_hit(ai_settings,screen, stats, sb, ship, aliens, bullets, lasers, ufo)
+        ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets, lasers, ufo)
 
 
 def check_fleet_edges(ai_settings, aliens):
@@ -261,7 +281,6 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets, lasers, ufos
             ufo.kill()
     ship.trigger_death()
     ship.update()
-
 
     if stats.ships_left > 0:
         # Decrement ships_left.
@@ -339,7 +358,7 @@ def create_alien(ai_settings, screen, aliens, alien_number, row_number):
     alien.x = alien_width + 1.25 * alien_width * alien_number
     alien.rect.x = alien.x
     alien.rect.y = alien.rect.height + 1 * alien.rect.height * row_number
-    alien.rect.y += int(ai_settings.screen_height/8)
+    alien.rect.y += int(ai_settings.screen_height / 8)
     aliens.add(alien)
 
 
@@ -400,3 +419,24 @@ def start_screen(ai_settings, game_stats, screen):
         play_button.draw_button()
         pygame.display.flip()
     return True
+
+
+def make_bunker(ai_settings, screen, position):
+    bunker = pygame.sprite.Group()
+    for row in range(ai_settings.bunker_rows):
+        for col in range(ai_settings.bunker_cols):
+            if not ((row > 3 and (1 < col < ai_settings.bunker_cols - 2)) or
+                    (row > 2 and (2 < col < ai_settings.bunker_cols - 3)) or
+                    (row == 0 and (col < 1 or col > ai_settings.bunker_cols - 2))):
+                block = Bunker(ai_settings, screen, row, col)
+                block.rect.x = int(ai_settings.screen_width * 0.15) + (250 * position) + (col * block.width)
+                block.rect.y = int(ai_settings.screen_height * 0.8) + (row * block.height)
+                bunker.add(block)
+    return bunker
+
+
+def resetBunkers(ai_settings, screen):
+    return pygame.sprite.Group(make_bunker(ai_settings, screen, position=0),
+                               make_bunker(ai_settings, screen, position=1),
+                               make_bunker(ai_settings, screen, position=2),
+                               make_bunker(ai_settings, screen, position=3))

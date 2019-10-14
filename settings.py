@@ -2,6 +2,7 @@ from os.path import abspath, dirname
 # from pygame import *
 from text import Text
 
+
 class Settings:
 
     def __init__(self):
@@ -43,7 +44,6 @@ class Settings:
         self.enemy3Text = Text(None, 25, '   =  30 pts', self.PURPLE, 368, 370)
         self.enemy4Text = Text(None, 25, '   =  ?????', self.RED, 368, 420)
 
-
         # Button settings
         self.btn_color = (0, 255, 0)
         self.btn_w = 200
@@ -53,18 +53,21 @@ class Settings:
         self.bunker_size_h = 10
         self.bunker_size_w = 15
         self.bunker_color = (0, 255, 0)
+        self.destruction_factor = 2
+        self.bunker_rows = 5
+        self.bunker_cols = 9
 
         # Ship settings.
         self.ship_image = self.IMAGE_PATH + 'spaceship.png'
         self.ship_explosions = [self.IMAGE_PATH +
                                 'ship_explosion1.png',
-                               self.IMAGE_PATH + 'ship_explosion2.png',
-                               self.IMAGE_PATH + 'ship_explosion3.png',
-                               self.IMAGE_PATH + 'ship_explosion4.png',
-                               self.IMAGE_PATH + 'ship_explosion5.png',
-                               self.IMAGE_PATH + 'ship_explosion6.png',
-                               self.IMAGE_PATH + 'ship_explosion7.png',
-                               self.IMAGE_PATH + 'ship_explosion8.png']
+                                self.IMAGE_PATH + 'ship_explosion2.png',
+                                self.IMAGE_PATH + 'ship_explosion3.png',
+                                self.IMAGE_PATH + 'ship_explosion4.png',
+                                self.IMAGE_PATH + 'ship_explosion5.png',
+                                self.IMAGE_PATH + 'ship_explosion6.png',
+                                self.IMAGE_PATH + 'ship_explosion7.png',
+                                self.IMAGE_PATH + 'ship_explosion8.png']
         self.ship_explosion_time = 200
         self.ship_limit = 3
 
@@ -90,14 +93,14 @@ class Settings:
                         self.IMAGE_PATH + 'purple_explosion2.png',
                         self.IMAGE_PATH + 'purple_explosion3.png',
                         self.IMAGE_PATH + 'purple_explosion4.png'],
-            'ghost':[self.IMAGE_PATH + 'blue_explosion1.png',
-                     self.IMAGE_PATH + 'blue_explosion2.png',
-                     self.IMAGE_PATH + 'blue_explosion3.png',
-                     self.IMAGE_PATH + 'blue_explosion4.png'],
-            'creeper':[self.IMAGE_PATH + 'green_explosion1.png',
-                       self.IMAGE_PATH + 'green_explosion2.png',
-                       self.IMAGE_PATH + 'green_explosion3.png',
-                       self.IMAGE_PATH + 'green_explosion4.png']
+            'ghost': [self.IMAGE_PATH + 'blue_explosion1.png',
+                      self.IMAGE_PATH + 'blue_explosion2.png',
+                      self.IMAGE_PATH + 'blue_explosion3.png',
+                      self.IMAGE_PATH + 'blue_explosion4.png'],
+            'creeper': [self.IMAGE_PATH + 'green_explosion1.png',
+                        self.IMAGE_PATH + 'green_explosion2.png',
+                        self.IMAGE_PATH + 'green_explosion3.png',
+                        self.IMAGE_PATH + 'green_explosion4.png']
         }
         self.alien_classic1 = self.IMAGE_PATH + 'alien-classic-frame1.png'
         self.alien_classic2 = self.IMAGE_PATH + 'alien-classic-frame2.png'
@@ -143,6 +146,9 @@ class Settings:
         self.laser_speed_factor = 10
         self.alien_speed_factor = 5
         self.base_alien_speed = 5
+        self.alien_speed_limit = None
+        self.alien_base_limit = None
+        self.ufo_speed = None
 
         # How quickly the game speeds up.
         self.speedup_scale = 1.1
@@ -168,7 +174,7 @@ class Settings:
 
         self.alien_speed_limit = self.alien_speed_factor * 5
         self.alien_base_limit = self.alien_speed_limit / 2
-        self.ufo_speed = self.alien_speed_factor *2
+        self.ufo_speed = self.alien_speed_factor * 2
 
     def increase_speed(self):
         self.ship_speed_factor *= self.speedup_scale
@@ -181,10 +187,8 @@ class Settings:
         if self.base_alien_speed < self.alien_base_limit:
             self.base_alien_speed *= self.speedup_scale
 
-
     def increase_alien_speed(self):
         self.alien_speed_factor *= self.speedup_scale
-
 
     def reset_alien_speed(self):
         self.alien_speed_factor = self.base_alien_speed
